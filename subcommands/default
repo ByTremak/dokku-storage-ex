@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_AVAILABLE_PATH/storage-ex/functions"
+
+storage_ex_main_cmd() {
+  declare desc="an alias for storage-ex:help"
+  local cmd="storage-ex"
+  storage_ex_help_content_func
+}
+
+storage_ex_main_cmd "$@"

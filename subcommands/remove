@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/storage-ex/functions"
+
+storage_ex_remove_cmd() {
+  declare desc="Remove host directory for persistent storage"
+  local cmd="storage-ex:remove"
+
+  local STORAGE_PATH=$(storage_ex_normalized_path $2)
+
+  if [[ -n $STORAGE_PATH ]]; then
+    storage_ex_verify_local_path "${STORAGE_PATH}" || dokku_log_fail "Host path can't be read or doesn't exist (${STORAGE_PATH})"
+
+    if [[ -z "$DOKKU_STORAGE_EX_FORCE_REMOVE" ]]; then
+    dokku_log_warn "WARNING: Potentially Destructive Action"
+    dokku_log_warn "This command will destroy the following path on the host filesystem:"
+    dokku_log_warn "${STORAGE_PATH}"
+    dokku_log_warn "To proceed, type \"confirm\""
+    echo ""
+
+    read -rp "> " confirmation
+    if [[ "$confirmation" != "confirm" ]]; then
+      dokku_log_fail "Confirmation did not match. Aborted."
+    fi
+  fi
+
+    dokku_log_info1 "Removing host storage path (${STORAGE_PATH}) ..."
+    rm -rf "${STORAGE_PATH}"
+  else
+    dokku_log_fail "App name or host path is required"
+  fi
+}
+
+storage_ex_remove_cmd "$@"

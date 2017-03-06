@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/storage-ex/functions"
+
+storage_ex_exists_cmd() {
+  declare desc="Verify existence of host directory for persistent storage"
+  local cmd="storage-ex:exists"
+
+  local STORAGE_PATH=$(storage_ex_normalized_path $2)
+
+  if [[ -n $STORAGE_PATH ]]; then
+    storage_ex_verify_local_path "${STORAGE_PATH}" || dokku_log_fail "Host path can't be read or doesn't exist (${STORAGE_PATH})"
+
+    echo "Host path exists (${STORAGE_PATH})"
+  else
+    dokku_log_fail "App name or host path is required"
+  fi
+}
+
+storage_ex_exists_cmd "$@"
