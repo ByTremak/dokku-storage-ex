@@ -29,7 +29,7 @@ storage_ex_normalized_path () {
 storage_ex_verify_local_path () {
   declare desc="checks if path exists"
   local -r passed_path=$1
-  [[ -d "${passed_path}" && -r "${passed_path}"]]
+  [[ -d "${passed_path}" && -r "${passed_path}" ]]
 }
 
 storage_ex_verify_mount () {
